@@ -1,0 +1,13 @@
+[project]
+name = "rag-workshop"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "arabic-reshaper>=3.0.0",
+    "chromadb>=1.2.1",
+    "google-genai>=1.46.0",
+    "python-bidi>=0.6.7",
+    "python-dotenv>=1.1.1",
+]
