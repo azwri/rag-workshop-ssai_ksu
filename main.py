@@ -1,4 +1,4 @@
-
+#%%
 from google import genai
 import chromadb
 import os
@@ -11,10 +11,24 @@ api_key = os.getenv("GEMINI_API_KEY")
 
 client = genai.Client(api_key=api_key)
 
-# إعداد ChromaDB كقاعدة بيانات دائمة تُحفظ على القرص
+#%%
+
+user_query = "متى تأسست شركة النور ومن هو رئيسها التنفيذي؟"
+
+print(f"سؤال المستخدم: {user_query}")
+
+response = client.models.generate_content(
+    model="gemini-2.0-flash-lite",
+    contents=user_query
+)
+
+print(response.text)
+print("-" * 100)
+
+#%%
+
 db = chromadb.PersistentClient(path="./chroma_db")
 
-# الحصول على المجموعة أو إنشاؤها إذا لم تكن موجودة
 collection = db.get_or_create_collection(name="my_documents_collection")
 
 documents = [
@@ -24,7 +38,7 @@ documents = [
     "الرئيس التنفيذي لشركة النور هو السيد أحمد السلمان، وقد أعلن عن خطط توسع عالمية في مؤتمر صحفي."
 ]
 
-# التحقق مما إذا كانت المجموعة تحتوي بالفعل على مستندات لتوفير رصيد الـ API
+
 existing_count = collection.count()
 
 if existing_count > 0:
@@ -44,40 +58,36 @@ else:
         ids=[f"doc_{i}" for i in range(len(documents))]
     )
 
-    print_arabic(f"تم تحويل {len(documents)} مستندات إلى Embeddings وحفظها في قاعدة البيانات!")
+    print(f"تم تحويل {len(documents)} مستندات إلى Embeddings وحفظها في قاعدة البيانات!")
 
 print("-" * 100)
+
+
+#%%
 
 user_query = "متى تأسست شركة النور ومن هو رئيسها التنفيذي؟"
-
-print_arabic(f"سؤال المستخدم: {user_query}")
-
-response = client.models.generate_content(
-    model="gemini-2.0-flash-lite",
-    contents=user_query
-)
-
-print_arabic(response.text)
-print("-" * 100)
 
 result = client.models.embed_content(
     model="gemini-embedding-001",
     contents=user_query,
 )
 query_embedding = result.embeddings[0].values
+print("تم إنشاء Embedding لسؤال المستخدم.")
+print(query_embedding)
+print("-" * 100)
 
 relevant_docs = collection.query(
     query_embeddings=[query_embedding],
     n_results=3
 )
-print_arabic("تم استرجاع المستندات ذات الصلة.")
 
 
 context = "\n".join(relevant_docs['documents'][0])
-print_arabic("\nالسياق المسترجع:")
-print_arabic(context)
+print("\nالسياق المسترجع:")
+print(context)
 print("-" * 100)
 
+#%%
 
 prompt = f"""أنت مساعد ذكي. أجب على السؤال بناءً على السياق فقط.
 إذا لم تتمكن من العثور على الإجابة في السياق المقدم، أجب بـ "المعلومة غير متوفرة في السياق."
@@ -93,4 +103,5 @@ response = client.models.generate_content(
     model="gemini-2.0-flash-lite",
     contents=prompt
 )
-print_arabic(response.text)
+print(response.text)
+# %%
