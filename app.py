@@ -66,6 +66,16 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# Header with logo
+col1, col2, col3 = st.columns([2, 2, 2])
+with col2:
+    st.image("image.png", width='stretch')
+
+# Title
+st.markdown("<h2 style='text-align: center;'>مقدمة في تقنية RAG: استرجاع وإنتاج المعرفة</h2>", unsafe_allow_html=True)
+st.markdown("<h4 style='text-align: center;'>مقارنة الإجابات: بدون RAG -- مع RAG</h4>", unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
+
 # Initialize API client
 @st.cache_resource
 def get_client():
@@ -83,7 +93,7 @@ client = get_client()
 collection = get_collection()
 
 # Title
-st.title("🤖 مقارنة الإجابات: بدون RAG vs مع RAG")
+# st.title("🤖 مقارنة الإجابات: بدون RAG -- مع RAG")
 st.markdown("---")
 
 # Sidebar with info
