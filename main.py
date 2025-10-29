@@ -1,5 +1,6 @@
 #%%
 from google import genai
+from openai import OpenAI
 import chromadb
 import os
 from dotenv import load_dotenv
@@ -10,6 +11,8 @@ load_dotenv(override=True)
 api_key = os.getenv("GEMINI_API_KEY")
 
 client = genai.Client(api_key=api_key)
+client_openai = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
 
 #%%
 
@@ -17,12 +20,24 @@ user_query = "متى تأسست شركة النور ومن هو رئيسها ا�
 
 print(f"سؤال المستخدم: {user_query}")
 
+print("-" * 100)
+print("إجابة بدون RAG: -- GEMINI 2.0 Flash Lite")
 response = client.models.generate_content(
     model="gemini-2.0-flash-lite",
     contents=user_query
 )
 
 print(response.text)
+print("-" * 100)
+print("إجابة بدون RAG: -- OPENAI")
+response_openai = client_openai.chat.completions.create(
+    model="gpt-4",
+    messages=[
+        {"role": "user", "content": user_query}
+    ]
+)
+
+print(response_openai.choices[0].message.content)
 print("-" * 100)
 
 #%%
@@ -42,9 +57,9 @@ documents = [
 existing_count = collection.count()
 
 if existing_count > 0:
-    print_arabic(f"تم العثور على {existing_count} مستند محفوظ مسبقاً في قاعدة البيانات!")
+    print(f"تم العثور على {existing_count} مستند محفوظ مسبقاً في قاعدة البيانات!")
 else:
-    print_arabic("لا توجد مستندات محفوظة. جاري إنشاء Embeddings جديدة...")
+    print("لا توجد مستندات محفوظة. جاري إنشاء Embeddings جديدة...")
     result = client.models.embed_content(
             model="gemini-embedding-001",
             contents=documents)

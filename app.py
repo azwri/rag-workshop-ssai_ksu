@@ -115,7 +115,7 @@ user_query = st.text_input(
     # placeholder="مثال: كم أرباح شركة النور؟"
 )
 
-if st.button("🔍 احصل على الإجابة", type="primary"):
+if st.button("🔍  ارسل", type="primary"):
     if user_query:
         # Create two columns for comparison
         col1, col2 = st.columns(2)

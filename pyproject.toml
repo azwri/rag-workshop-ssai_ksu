@@ -9,6 +9,7 @@ dependencies = [
     "google-genai>=1.46.0",
     "ipykernel>=7.1.0",
     "ipython>=9.6.0",
+    "openai>=2.6.1",
     "print-arabic>=0.1",
     "python-dotenv>=1.1.1",
     "streamlit>=1.50.0",
